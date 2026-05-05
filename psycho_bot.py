@@ -2104,7 +2104,7 @@ from google.oauth2.service_account import Credentials
 from datetime import datetime
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
-CREDS_FILE = "credentials.json"  # название твоего JSON файла
+CREDS_FILE = "credentials.json.json"  # название твоего JSON файла
 SPREADSHEET_ID = "1nZXHnRmqq97kaU5zc-Yra1T-bmRnKiLAWpKJyO0HRjk"
 
 def get_sheet():
