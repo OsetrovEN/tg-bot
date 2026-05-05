@@ -2113,6 +2113,19 @@ def get_sheet():
     creds = Credentials.from_service_account_info(creds_json, scopes=SCOPES)
     client = gspread.authorize(creds)
     return client.open_by_key(SPREADSHEET_ID).sheet1
+	
+def get_sheet():
+    def log_entry(username, user_id, action, value=""):
+    creds_json = json.loads(os.environ.get("GOOGLE_CREDENTIALS"))
+    creds = Credentials.from_service_account_info(creds_json, scopes=SCOPES)
+    client = gspread.authorize(creds)
+    sheet = client.open_by_key(SPREADSHEET_ID).get_worksheet(1)
+    if not sheet.row_values(1):
+        sheet.append_row(["username", "user_id", "action", "value", "timestamp"])
+    sheet.append_row([username, user_id, action, value, datetime.now().strftime("%Y-%m-%d %H:%M")])
+
+def save_feedback(username, user_id, date_str, cs, energy, mission, score):
+    sheet = get_sheet()
 
 def save_feedback(username, user_id, date_str, cs, energy, mission, score):
     sheet = get_sheet()
@@ -2173,6 +2186,7 @@ class Analysis(StatesGroup):
 @dp.message_handler(commands=["start"], state="*")
 async def cmd_start(msg: types.Message, state: FSMContext):
     await state.finish()
+    log_entry(msg.from_user.username or "no_username", msg.from_user.id, "start")
     await Analysis.date.set()
     await msg.answer(
         "👁 <b>Психологический разбор по дате рождения</b>\n\n"
