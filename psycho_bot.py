@@ -13,25 +13,6 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils import executor
 
 logging.basicConfig(level=logging.INFO)
-from aiohttp import web
-import threading
-
-def run_web():
-    import asyncio
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    async def health(request):
-        return web.Response(text="OK")
-    app = web.Application()
-    app.router.add_get("/", health)
-    runner = web.AppRunner(app)
-    loop.run_until_complete(runner.setup())
-    site = web.TCPSite(runner, "0.0.0.0", 10000)
-    loop.run_until_complete(site.start())
-    loop.run_forever()
-
-threading.Thread(target=run_web, daemon=True).start()
-
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
 bot = Bot(token=BOT_TOKEN)
