@@ -2081,24 +2081,14 @@ def format_paid(cs, mission, date_str, year):
 
 # === Сбор статистики ===
 
-import gspread
-from google.oauth2.service_account import Credentials
-from datetime import datetime
-
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
-CREDS_FILE = "credentials.json"  # название твоего JSON файла
-SPREADSHEET_ID = "1nZXHnRmqq97kaU5zc-Yra1T-bmRnKiLAWpKJyO0HRjk"
-
-def get_sheet():
-    creds = Credentials.from_service_account_file(CREDS_FILE, scopes=SCOPES)
-    client = gspread.authorize(creds)
-    return client.open_by_key(SPREADSHEET_ID).sheet1
-
 def save_feedback(username, user_id, date_str, cs, energy, mission, score):
-    sheet = get_sheet()
-    if sheet.row_count == 1 and not sheet.row_values(1):
-        sheet.append_row(["username", "user_id", "date", "cs", "energy", "mission", "score", "timestamp"])
-    sheet.append_row([username, user_id, date_str, cs, energy, mission, score, datetime.now().strftime("%Y-%m-%d %H:%M")])
+    path = Path("feedback.csv")
+    file_exists = path.exists()
+    with open(path, "a", newline="", encoding="utf-8-sig") as f:
+        writer = csv.writer(f, delimiter=";")
+        if not file_exists:
+            writer.writerow(["username", "user_id", "date", "cs", "energy", "mission", "score", "timestamp"])
+        writer.writerow([username, user_id, date_str, cs, energy, mission, score, datetime.now().strftime("%Y-%m-%d %H:%M")])
 
 # === Парсинг даты ===
 
