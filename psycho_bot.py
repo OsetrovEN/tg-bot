@@ -13,7 +13,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils import executor
 
 logging.basicConfig(level=logging.INFO)
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "532904408:AAGycxT9ceo3jQXuZbGR-26nambIDvEU6T0")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "8064278049:AAEi01pYq7-qMgJodSYBULXZ2PONzhO88Vo")
 
 bot = Bot(token=BOT_TOKEN)
 storage = MemoryStorage()
