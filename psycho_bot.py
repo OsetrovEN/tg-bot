@@ -12,6 +12,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils import executor
+from aiogram.dispatcher.middlewares import BaseMiddleware
 
 logging.basicConfig(level=logging.INFO)
 from aiohttp import web
@@ -37,6 +38,11 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN")
 bot = Bot(token=BOT_TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
+class LogMiddleware(BaseMiddleware):
+    async def on_pre_process_message(self, msg: types.Message, data: dict):
+        log_entry(msg.from_user.username or "no_username", msg.from_user.id, "message", msg.text or "")
+
+dp.middleware.setup(LogMiddleware())
 
 # --- Расчёт параметров ---
 
@@ -2307,4 +2313,11 @@ async def fallback(msg: types.Message, state: FSMContext):
     )
 
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    import time
+    while True:
+        try:
+            executor.start_polling(dp, skip_updates=True)
+        except Exception as e:
+            logging.error(f"Бот упал с ошибкой: {e}")
+            logging.info("Перезапуск через 10 секунд...")
+            time.sleep(10)
